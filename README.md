@@ -12,12 +12,27 @@ sudo systemctl enable --now daed
 
 最后一条命令用于启动并设置开机自启；仅安装软件包时可省略。`pacman` 会检查并处理包依赖；此包与单独安装的 `dae` 包冲突。软件包只面向 x86_64 的 pacman 系统，其他架构或发行版需从源码另行构建。
 
-源码构建需要 Go 1.26+、Node.js、pnpm、clang 和 make：
+**重新编译 Arch 安装包**（以普通用户运行 `makepkg`）：
 
 ```bash
-repo_root="$(pwd)"
-make VERSION=2.1.1 GOMODCACHE="$repo_root/.go-mod"
+sudo pacman -S --needed base-devel
+curl -fL -o daed-ebpf-0.22.0-build.zip https://raw.githubusercontent.com/risedsac/daed_linux_new/main/release/daed-ebpf-0.22.0-build.zip
+bsdtar -xf daed-ebpf-0.22.0-build.zip
+cd daed-ebpf-0.22.0-build
+makepkg -s
 ```
+
+`makepkg -s` 会安装缺少的构建依赖并重新编译，完成后在当前目录生成 `daed-2.1.1-2-x86_64.pkg.tar.zst`（x86_64 机器上）。随后可用 `sudo pacman -U ./daed-2.1.1-2-x86_64.pkg.tar.zst` 安装；若希望构建完成后自动安装，将 `makepkg -s` 改为 `makepkg -si`。构建压缩包包含完整的修改版源码、`PKGBUILD` 和与源码匹配的 SHA-512 校验值。
+
+**从 Git 仓库编译可执行文件**（需要 Go 1.26+、Node.js、pnpm、clang 和 make）：
+
+```bash
+git clone https://github.com/risedsac/daed_linux_new.git
+cd daed_linux_new
+make VERSION=2.1.1 GOMODCACHE="$PWD/.go-mod"
+```
+
+此方式生成当前目录下的 `daed` 可执行文件；需要 pacman 安装包时使用上面的 `makepkg` 流程。
 
 升级范围和验证结果见 [UPGRADE-ebpf-0.22.0.md](UPGRADE-ebpf-0.22.0.md)。下方是上游 daed 的项目介绍；其中的徽章、演示和容器镜像指向上游项目。
 
