@@ -2,6 +2,16 @@
 
 本仓库直接包含 wing、dae-core 和 eBPF 头文件源码，无需拉取 Git 子模块。预构建的 Arch Linux 软件包见 [release/daed-2.1.1-2-x86_64.pkg.tar.zst](release/daed-2.1.1-2-x86_64.pkg.tar.zst)。可复用的本地构建压缩包见 [release/daed-ebpf-0.22.0-build.zip](release/daed-ebpf-0.22.0-build.zip)，校验值见 [SHA256SUMS](release/SHA256SUMS)。
 
+**Arch Linux / CachyOS x86_64 直接安装**（不需要编译）：
+
+```bash
+curl -fL -o daed-2.1.1-2-x86_64.pkg.tar.zst https://raw.githubusercontent.com/risedsac/daed_linux_new/main/release/daed-2.1.1-2-x86_64.pkg.tar.zst
+sudo pacman -U ./daed-2.1.1-2-x86_64.pkg.tar.zst
+sudo systemctl enable --now daed
+```
+
+最后一条命令用于启动并设置开机自启；仅安装软件包时可省略。`pacman` 会检查并处理包依赖；此包与单独安装的 `dae` 包冲突。软件包只面向 x86_64 的 pacman 系统，其他架构或发行版需从源码另行构建。
+
 源码构建需要 Go 1.26+、Node.js、pnpm、clang 和 make：
 
 ```bash
